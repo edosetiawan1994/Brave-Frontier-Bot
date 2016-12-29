@@ -4,7 +4,11 @@ var fs = require("fs");
 var data_bf = fs.readFileSync("bravefrontier_data/info.json");
 var json_bf = JSON.parse(data_bf);
 var data_op = require("./optc-db.github.io/common/data/units.js");
+var special_op = require("./optc-db.github.io/common/data/details.js");
+var families_op = require("./optc-db.github.io/common/data/families.js");
 var units = data_op.units;
+var details = special_op.details;
+var families = families_op.families;
 
 bot.on("message", msg => {
   // Set the prefix
@@ -14,13 +18,13 @@ bot.on("message", msg => {
   // Exit if any bot
   if(msg.author.bot) return;
 
-  if (msg.content.startsWith(prefix + "gif")) {
-    msg.channel.sendMessage(("http://i.imgur.com/tTuK9I8.gif"));
-  }
+  if (msg.content.startsWith(prefix + "gif"))
+    msg.channel.sendMessage(("http://i.imgur.com/c5yeWVx.gif"));
 
-  if (msg.content.startsWith(prefix + "help")) {
+  if (msg.content.startsWith(prefix + "help"))
     msg.channel.sendMessage(
       "\n Command List : " +
+      "\n ========== BRAVE FRONTIER ==========" +
       "\n 1. !list *text* *rarity*   - list every single unit whose name contain the text and rarity inputted " +
       "\n 2. !unit *id* \t\t\t  - Show unit detail whose id inputted" +
       "\n 3. !search *element* *rarity* *texts*   - Show unit detail which is filtered through element, rarity, and texts contained" +
@@ -30,30 +34,31 @@ bot.on("message", msg => {
       "\n ." +
       "\n ." +
       "\n ." +
-      "\n 101. !alvin \t\t\t - Try me :)" +
+      "\n ============= ONE PIECE =============" +
+      "\n 51.  !op_list *text* *rarity*   - list every single unit whose name contain the text and rarity inputted " +
+      "\n 52.  !op_unit *id* \t\t\t  - Show unit detail whose id inputted" +
+      "\n ." +
+      "\n ." +
+      "\n ." +
+      "\n ================ MISC ================" +
+      "\n 101. !gif \t\t\t - Try me :)" +
       "\n 102. !avatar \t\t - Show user's profile picture (avatar)"
     );
-  }
-
-  if (msg.content.startsWith(prefix + "op_help")) {
-    msg.channel.sendMessage(
-      "test " + units.length
-    );
-  }
   
-  if (msg.content.startsWith(prefix + "avatar")) {
+  if (msg.content.startsWith(prefix + "avatar"))
     msg.reply(msg.author.avatarURL);
-  }
   
-  if (msg.content.startsWith(prefix + "mitigator")) {
-    msg.reply("\n Type one of this : \n !search `element` `rarity` reduces damage \n !search `element` `rarity` damage reduction");
-  }
+  if (msg.content.startsWith(prefix + "mitigator"))
+    msg.reply("\n Type one of this :" +
+      " \n !search `element` `rarity` reduces damage" +
+      " \n !search `element` `rarity` damage reduction" );
   
-  if (msg.content.startsWith(prefix + "sparker")) {
-    msg.reply("\n Type one of this : \n !search `element` `rarity` boosts spark damage \n !search `element` `rarity` spark critical " );
-  }
+  if (msg.content.startsWith(prefix + "sparker"))
+    msg.reply("\n Type one of this : " +
+      " \n !search `element` `rarity` boosts spark damage" +
+      " \n !search `element` `rarity` spark critical " );
   
-  if (msg.content.startsWith(prefix + "healer")) {
+  if (msg.content.startsWith(prefix + "healer"))
     msg.reply("\n Type one of this :" +
     "\n !search `element` `rarity` restores hp " +
     "\n !search `element` `rarity` gradually restores hp" +
@@ -62,7 +67,6 @@ bot.on("message", msg => {
     "\n !search `element` `rarity` spark damage restores hp" +
     "\n !search `element` `rarity` absorbs hp" +
     "\n !search `element` `rarity` may restore HP" );
-  }
   
   if (msg.content.startsWith(prefix + "search")) {
     var count_search = 0;
@@ -162,31 +166,25 @@ bot.on("message", msg => {
   if (msg.content.startsWith(prefix + "list")) {
     var count_list = 0;
     let [unit, rarity] = msg.content.split(" ").slice(1);
+    var bf_list_full_string = "";
     if( `${unit}`.length > 2) {
       for (var key_list in json_bf) {
         var str_list = JSON.stringify(json_bf[key_list]["name"]);
         if(`${rarity}` == "all") {
           if ( str_list.toLowerCase().includes(`${unit}`.toLowerCase())) {
-            if(count_list < 8) {
-              msg.reply(
-                "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost" +
-                "\n http://2.cdn.bravefrontier.gumi.sg/content/unit/img/unit_ills_thum_" + json_bf[key_list]["id"] + ".png"
-              );
-              count_list++;
-            }
+            bf_list_full_string = bf_list_full_string + 
+              "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost"
+            count_list++;
           }
         } else {
           if ( str_list.toLowerCase().includes(`${unit}`.toLowerCase()) && json_bf[key_list]["rarity"] == `${rarity}`) {
-            if(count_list < 8) {
-              msg.reply(
-                "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost" +
-                "\n http://2.cdn.bravefrontier.gumi.sg/content/unit/img/unit_ills_thum_" + json_bf[key_list]["id"] + ".png"
-              );
-              count_list++;
-            }
+            bf_list_full_string = bf_list_full_string + 
+              "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost"
+            count_list++;
           }
         }
       }
+      msg.reply(bf_list_full_string);
     } else {
       msg.reply("Please insert at least 3 characters");
     }
@@ -202,49 +200,36 @@ bot.on("message", msg => {
   }
 
   if (msg.content.startsWith(prefix + "op_list")) {
-    var count_list = 0;
+    var op_list_full_string = "";
     let [unit, rarity] = msg.content.split(" ").slice(1);
     if( `${unit}`.length > 2) {
       for(i = 0; i < units.length; i++) {
         var id = i + 1;
         var str_list = units[i][0];
+        if(families[i] != null) var str_families = families[i];
+        else var str_families = "none";
         if(id < 10) ids = "000"+id;
         else if(id >9 && id < 100) ids = "00"+id;
         else if(id > 99 && id < 1000) ids = "0"+id;
         else ids = id;
         if(`${rarity}` == "all") {
-          if ( str_list.toLowerCase().includes(`${unit}`.toLowerCase())) {
-            if(count_list < 8) {
-              msg.reply(
-                "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost" +
-                "\n http://onepiece-treasurecruise.com/wp-content/uploads/c" + ids + ".png"
-              );
-              count_list++;
-            }
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase())) {
+            op_list_full_string = op_list_full_string + 
+              "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
           }
         } else {
-          if ( str_list.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}`) {
-            if(count_list < 8) {
-              msg.reply(
-                "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost" +
-                "\n http://onepiece-treasurecruise.com/wp-content/uploads/c" + ids + ".png"
-              );
-              count_list++;
-            }
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}`) {
+            op_list_full_string = op_list_full_string + 
+              "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost"
           }
         }
       }
+      if(op_list_full_string == "")
+        msg.reply("Unit not found, try different name or rarity");
+      else
+        msg.reply(op_list_full_string);
     } else {
       msg.reply("Please insert at least 3 characters");
-    }
-    if(`${rarity}` > 1 || `${rarity}` < 6 ) {
-      if(count_list == 0) {
-        msg.reply("Unit not found, try different name or rarity");
-      }
-    } else {
-      if(count_list == 0) {
-        msg.reply("Wrong rarity, 1-6 rarity only");
-      }
     }
   }
   
@@ -293,6 +278,44 @@ bot.on("message", msg => {
     if(`${id}`.match(/^[0-9]+$/) != null) {
       if(count_unit == 0) {
         msg.reply("Unit does/has not exist");
+      }
+    } else {
+      msg.reply("Please insert numeric unit ID");
+    }
+  }
+
+  if (msg.content.startsWith(prefix + "op_unit")) {
+    var count_unit = 0;
+    let [unit_id] = msg.content.split(" ").slice(1);
+    if(`${unit_id}`.match(/^[0-9]+$/) != null) {
+      if(details[`${unit_id}`] === undefined) {
+        msg.reply("Unit does/has not exist");
+      } else {
+        for(i = 0; i < units.length; i++) {
+          id = i + 1;
+
+          if(details[`${unit_id}`]['captain'] === undefined) ability = "\n Special Ability : " + details[`${unit_id}`]['special'];
+          else ability = "\n Captain Ability : " + details[`${unit_id}`]['captain'] + "\n Special Ability : " + details[`${unit_id}`]['special'];
+
+          // set id into 4 digit string
+          if(id < 10) ids = "000"+id;
+          else if(id >9 && id < 100) ids = "00"+id;
+          else if(id > 99 && id < 1000) ids = "0"+id;
+          else ids = id;
+
+          // set unit's class
+          if(units[i][2][1] != null && units[i][2][0].length != 1 && units[i][2][1].length != 1) unit_class = units[i][2][0] + "/" + units[i][2][1];
+          else unit_class = units[i][2];
+
+          if(i+1 == `${unit_id}`){
+            msg.reply(
+              "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " +
+              "\n " + units[i][1] + " | " + units[i][4] + " Cost" + " | " + unit_class +
+              ability +
+              "\n http://onepiece-treasurecruise.com/wp-content/uploads/c" + ids + ".png"
+            );
+          }
+        }
       }
     } else {
       msg.reply("Please insert numeric unit ID");

@@ -1,1 +1,1 @@
-# Brave-Frontier-Bot
+# Edo Setiawan's Bot
