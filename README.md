@@ -4,7 +4,7 @@ How to install (for windows):
 
 1. open cmd
 
-1a. (optional) you can choose where to put the repo by changing your location, something helpful :
+	(optional) you can choose where to put the repo by changing your location, something helpful :
 
 	"cd folder_name" - - to enter stated folder
 
@@ -37,6 +37,6 @@ additional, if you clone onepiece data, then theres a slight changes you have to
 
 use your editor (i recommend sublime 3, download it f you dont have it) then open mybot folder, go to : 
 
-optc-db.github.io/common/data/units, change "window.units" in line 1 into "var units", then at the bottom of the same file add this "export.units = units;" and save the file.
+optc-db.github.io/common/data/units, change "window.units" in line 1 into "var units", then at the bottom of the same file add this "exports.units = units;" and save the file.
 
-not only units, you have to change details, families, and cooldowns (e.g. : "window.details" into "var details" and add "export.details = details;", then save)
+not only units, you have to change details, families, and cooldowns (e.g. : "window.details" into "var details" and add "exports.details = details;", then save)
