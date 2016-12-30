@@ -6,7 +6,7 @@ How to install (for windows):
 
 	(optional) you can choose where to put the repo by changing your location, something helpful :
 
-	"cd folder_name" - - to enter stated folder
+	"cd folder_name" - to enter stated folder
 
 	"cd .." - to go back
 
