@@ -6,9 +6,11 @@ var json_bf = JSON.parse(data_bf);
 var data_op = require("./optc-db.github.io/common/data/units.js");
 var special_op = require("./optc-db.github.io/common/data/details.js");
 var families_op = require("./optc-db.github.io/common/data/families.js");
+var cooldowns_op = require("./optc-db.github.io/common/data/cooldowns.js");
 var units = data_op.units;
 var details = special_op.details;
 var families = families_op.families;
+var cooldowns = cooldowns_op.cooldowns;
 
 bot.on("message", msg => {
   // Set the prefix
@@ -53,10 +55,10 @@ bot.on("message", msg => {
       " \n !search `element` `rarity` reduces damage" +
       " \n !search `element` `rarity` damage reduction" );
   
-  if (msg.content.startsWith(prefix + "sparker"))
-    msg.reply("\n Type one of this : " +
-      " \n !search `element` `rarity` boosts spark damage" +
-      " \n !search `element` `rarity` spark critical " );
+  if (msg.content.startsWith(prefix + "sparker")) {
+    var sparker_string = "\n Type one of this : \n !search `element` `rarity` boosts spark damage \n !search `element` `rarity` spark critical "
+    msg.reply(sparker_string);
+  }
   
   if (msg.content.startsWith(prefix + "healer"))
     msg.reply("\n Type one of this :" +
@@ -202,27 +204,25 @@ bot.on("message", msg => {
   if (msg.content.startsWith(prefix + "op_list")) {
     var op_list_full_string = "";
     let [unit, rarity] = msg.content.split(" ").slice(1);
+    var unit_id = 1;
     if( `${unit}`.length > 2) {
       for(i = 0; i < units.length; i++) {
         var id = i + 1;
         var str_list = units[i][0];
         if(families[i] != null) var str_families = families[i];
-        else var str_families = "none";
-        if(id < 10) ids = "000"+id;
-        else if(id >9 && id < 100) ids = "00"+id;
-        else if(id > 99 && id < 1000) ids = "0"+id;
-        else ids = id;
+        else var str_families = "";
         if(`${rarity}` == "all") {
-          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase())) {
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && details[unit_id]['captain'] !== undefined) {
             op_list_full_string = op_list_full_string + 
               "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
           }
         } else {
-          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}`) {
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}` && details[unit_id]['captain'] !== undefined) {
             op_list_full_string = op_list_full_string + 
               "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost"
           }
         }
+        unit_id++;
       }
       if(op_list_full_string == "")
         msg.reply("Unit not found, try different name or rarity");
@@ -286,16 +286,34 @@ bot.on("message", msg => {
 
   if (msg.content.startsWith(prefix + "op_unit")) {
     var count_unit = 0;
+    var ability = "";
+    var op_unit_full_string = "";
     let [unit_id] = msg.content.split(" ").slice(1);
     if(`${unit_id}`.match(/^[0-9]+$/) != null) {
       if(details[`${unit_id}`] === undefined) {
         msg.reply("Unit does/has not exist");
       } else {
         for(i = 0; i < units.length; i++) {
+          // set unit id
           id = i + 1;
 
-          if(details[`${unit_id}`]['captain'] === undefined) ability = "\n Special Ability : " + details[`${unit_id}`]['special'];
-          else ability = "\n Captain Ability : " + details[`${unit_id}`]['captain'] + "\n Special Ability : " + details[`${unit_id}`]['special'];
+          // set unit's abilities
+          if(`${unit_id}` == id){
+            if(details[`${unit_id}`]['captain'] !== undefined)
+              ability = ability + "\n Captain Ability : " + "\n\t" + details[`${unit_id}`]['captain'];
+            if(details[`${unit_id}`]['sailor'] !== undefined)
+              ability = ability + "\n Sailor Ability : " + "\n\t" + details[`${unit_id}`]['sailor'];
+            if(details[`${unit_id}`]['special'][0]['description'] === undefined)
+              ability = ability + "\n Special Ability : " + "\n\t" + details[`${unit_id}`]['special'];
+            else {
+              ability = ability + "\n Special Ability : "
+              temp = 1;
+              for(var key_special in details[`${unit_id}`]['special']){
+                ability = ability + "\n\t Stage " + temp + " : \n\t\t" + details[`${unit_id}`]['special'][key_special]['description'];
+                temp++;
+              }
+            }
+          }
 
           // set id into 4 digit string
           if(id < 10) ids = "000"+id;
@@ -304,19 +322,29 @@ bot.on("message", msg => {
           else ids = id;
 
           // set unit's class
-          if(units[i][2][1] != null && units[i][2][0].length != 1 && units[i][2][1].length != 1) unit_class = units[i][2][0] + "/" + units[i][2][1];
+          if(units[i][2][1] != null && units[i][2][0].length != 1 && units[i][2][1].length != 1) unit_class = units[i][2][0] + units[i][2][1];
           else unit_class = units[i][2];
+          unit_class = unit_class.toString().replace("Slasher", "<:slasher:264223664646520832>");
+          unit_class = unit_class.toString().replace("Striker", "<:striker:264223664654778369>");
+          unit_class = unit_class.toString().replace("Shooter", "<:shooter:264223662402568195>");
+          unit_class = unit_class.toString().replace("Powerhouse", "<:powerhouse:264223664747053057>");
+          unit_class = unit_class.toString().replace("Free Spirit", "<:freespirit:264223665208426496>");
+          unit_class = unit_class.toString().replace("Fighter", "<:fighter:264223661714571274>");
+          unit_class = unit_class.toString().replace("Evolver", "<:evolver:264223666298945539>");
+          unit_class = unit_class.toString().replace("Driven", "<:driven:264223661609713664>");
+          unit_class = unit_class.toString().replace("Cerebral", "<:cerebral:264223664910630922>");
+          unit_class = unit_class.toString().replace("Booster", "<:booster:264223668333182979>");
 
           if(i+1 == `${unit_id}`){
-            msg.reply(
+            op_unit_full_string = 
               "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " +
-              "\n " + units[i][1] + " | " + units[i][4] + " Cost" + " | " + unit_class +
+              "\n\t\t " + units[i][1] + " | " + units[i][4] + " Cost" + " | " + unit_class +
               ability +
-              "\n http://onepiece-treasurecruise.com/wp-content/uploads/c" + ids + ".png"
-            );
+              "\n http://onepiece-treasurecruise.com/wp-content/uploads/c" + ids + ".png";
           }
         }
       }
+      msg.reply(op_unit_full_string);
     } else {
       msg.reply("Please insert numeric unit ID");
     }
