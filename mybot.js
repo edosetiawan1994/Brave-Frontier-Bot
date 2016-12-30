@@ -289,8 +289,8 @@ bot.on("message", msg => {
     var ability = "";
     var op_unit_full_string = "";
     let [unit_id] = msg.content.split(" ").slice(1);
-    var max_cd = cooldowns[`${unit_id}`][0]
-    if(cooldowns[`${unit_id}`][1] === undefined)
+    var max_cd = cooldowns[`${unit_id}`-1][0]
+    if(cooldowns[`${unit_id}`-1][1] === undefined)
     	var min_cd = max_cd
     else
     	var min_cd = cooldowns[`${unit_id}`][1]
