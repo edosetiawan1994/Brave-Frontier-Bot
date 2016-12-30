@@ -289,6 +289,11 @@ bot.on("message", msg => {
     var ability = "";
     var op_unit_full_string = "";
     let [unit_id] = msg.content.split(" ").slice(1);
+    var max_cd = cooldowns[`${unit_id}`][0]
+    if(cooldowns[`${unit_id}`][1] === undefined)
+    	var min_cd = max_cd
+    else
+    	var min_cd = cooldowns[`${unit_id}`][1]
     if(`${unit_id}`.match(/^[0-9]+$/) != null) {
       if(details[`${unit_id}`] === undefined) {
         msg.reply("Unit does/has not exist");
@@ -304,12 +309,13 @@ bot.on("message", msg => {
             if(details[`${unit_id}`]['sailor'] !== undefined)
               ability = ability + "\n Sailor Ability : " + "\n\t" + details[`${unit_id}`]['sailor'];
             if(details[`${unit_id}`]['special'][0]['description'] === undefined)
-              ability = ability + "\n Special Ability : " + "\n\t" + details[`${unit_id}`]['special'];
+              ability = ability + "\n Special Ability (CD : " + max_cd + " -> " + min_cd + ")" + " :\n\t" + details[`${unit_id}`]['special'];
             else {
-              ability = ability + "\n Special Ability : "
+              ability = ability + "\n Special Ability : ";
               temp = 1;
               for(var key_special in details[`${unit_id}`]['special']){
-                ability = ability + "\n\t Stage " + temp + " : \n\t\t" + details[`${unit_id}`]['special'][key_special]['description'];
+                ability = ability + "\n\tStage " + temp + " (CD : " + details[`${unit_id}`]['special'][key_special]['cooldown'][0] + " -> " + 
+                details[`${unit_id}`]['special'][key_special]['cooldown'][1] + ") : \n\t\t" + details[`${unit_id}`]['special'][key_special]['description'];
                 temp++;
               }
             }
