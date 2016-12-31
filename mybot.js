@@ -289,11 +289,17 @@ bot.on("message", msg => {
     var ability = "";
     var op_unit_full_string = "";
     let [unit_id] = msg.content.split(" ").slice(1);
-    var max_cd = cooldowns[`${unit_id}`-1][0]
-    if(cooldowns[`${unit_id}`-1][1] === undefined)
-    	var min_cd = max_cd
-    else
-    	var min_cd = cooldowns[`${unit_id}`][1]
+
+    if(cooldowns[`${unit_id}`-1] !== null) {
+    	var max_cd = cooldowns[`${unit_id}`-1][0]
+        if(cooldowns[`${unit_id}`-1][1] === undefined)
+        	var min_cd = max_cd
+        else
+        	var min_cd = cooldowns[`${unit_id}`-1][1]
+    } else {
+    	var max_cd = "none", min_cd="none";
+    }
+
     if(`${unit_id}`.match(/^[0-9]+$/) != null) {
       if(details[`${unit_id}`] === undefined) {
         msg.reply("Unit does/has not exist");
@@ -308,17 +314,19 @@ bot.on("message", msg => {
               ability = ability + "\n Captain Ability : " + "\n\t" + details[`${unit_id}`]['captain'];
             if(details[`${unit_id}`]['sailor'] !== undefined)
               ability = ability + "\n Sailor Ability : " + "\n\t" + details[`${unit_id}`]['sailor'];
-            if(details[`${unit_id}`]['special'][0]['description'] === undefined)
-              ability = ability + "\n Special Ability (CD : " + max_cd + " -> " + min_cd + ")" + " :\n\t" + details[`${unit_id}`]['special'];
-            else {
-              ability = ability + "\n Special Ability : ";
-              temp = 1;
-              for(var key_special in details[`${unit_id}`]['special']){
-                ability = ability + "\n\tStage " + temp + " (CD : " + details[`${unit_id}`]['special'][key_special]['cooldown'][0] + " -> " + 
-                details[`${unit_id}`]['special'][key_special]['cooldown'][1] + ") : \n\t\t" + details[`${unit_id}`]['special'][key_special]['description'];
-                temp++;
-              }
-            }
+          	if(details[`${unit_id}`]['special'] !== undefined){
+            	if(details[`${unit_id}`]['special'][0]['description'] === undefined)
+                	ability = ability + "\n Special Ability (CD : " + max_cd + " -> " + min_cd + ")" + " :\n\t" + details[`${unit_id}`]['special'];
+                else {
+					ability = ability + "\n Special Ability : ";
+					temp = 1;
+					for(var key_special in details[`${unit_id}`]['special']){
+						ability = ability + "\n\tStage " + temp + " (CD : " + details[`${unit_id}`]['special'][key_special]['cooldown'][0] + " -> " + 
+						details[`${unit_id}`]['special'][key_special]['cooldown'][1] + ") : \n\t\t" + details[`${unit_id}`]['special'][key_special]['description'];
+						temp++;
+					}
+				}
+			}
           }
 
           // set id into 4 digit string
@@ -330,16 +338,16 @@ bot.on("message", msg => {
           // set unit's class
           if(units[i][2][1] != null && units[i][2][0].length != 1 && units[i][2][1].length != 1) unit_class = units[i][2][0] + units[i][2][1];
           else unit_class = units[i][2];
-          unit_class = unit_class.toString().replace("Slasher", "<:slasher:264223664646520832>");
-          unit_class = unit_class.toString().replace("Striker", "<:striker:264223664654778369>");
-          unit_class = unit_class.toString().replace("Shooter", "<:shooter:264223662402568195>");
-          unit_class = unit_class.toString().replace("Powerhouse", "<:powerhouse:264223664747053057>");
-          unit_class = unit_class.toString().replace("Free Spirit", "<:freespirit:264223665208426496>");
-          unit_class = unit_class.toString().replace("Fighter", "<:fighter:264223661714571274>");
-          unit_class = unit_class.toString().replace("Evolver", "<:evolver:264223666298945539>");
-          unit_class = unit_class.toString().replace("Driven", "<:driven:264223661609713664>");
-          unit_class = unit_class.toString().replace("Cerebral", "<:cerebral:264223664910630922>");
-          unit_class = unit_class.toString().replace("Booster", "<:booster:264223668333182979>");
+          unit_class = unit_class.toString().replace("Slasher", "<:slasher:264570214736330764>");
+          unit_class = unit_class.toString().replace("Striker", "<:striker:264570214258049036>");
+          unit_class = unit_class.toString().replace("Shooter", "<:shooter:264570214287540224>");
+          unit_class = unit_class.toString().replace("Powerhouse", "<:powerhouse:264570214589530113>");
+          unit_class = unit_class.toString().replace("Free Spirit", "<:freespirit:264570214547456000>");
+          unit_class = unit_class.toString().replace("Fighter", "<:fighter:264570213981356059>");
+          unit_class = unit_class.toString().replace("Evolver", "<:evolver:264570214354649109>");
+          unit_class = unit_class.toString().replace("Driven", "<:driven:264570213989744652>");
+          unit_class = unit_class.toString().replace("Cerebral", "<:cerebral:264570214434209792>");
+          unit_class = unit_class.toString().replace("Booster", "<:booster:264570214719553536>");
 
           if(i+1 == `${unit_id}`){
             op_unit_full_string = 
