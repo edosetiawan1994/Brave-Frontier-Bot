@@ -1,12 +1,12 @@
 var Discord = require("discord.js");
 var bot = new Discord.Client();
 var fs = require("fs");
-var data_bf = fs.readFileSync("bravefrontier_data/info.json");
+var data_bf = fs.readFileSync("/info.json");
 var json_bf = JSON.parse(data_bf);
-var data_op = require("./optc-db.github.io/common/data/units.js");
-var special_op = require("./optc-db.github.io/common/data/details.js");
-var families_op = require("./optc-db.github.io/common/data/families.js");
-var cooldowns_op = require("./optc-db.github.io/common/data/cooldowns.js");
+var data_op = require("/units.js");
+var special_op = require("/details.js");
+var families_op = require("/families.js");
+var cooldowns_op = require("/cooldowns.js");
 var units = data_op.units;
 var details = special_op.details;
 var families = families_op.families;
@@ -46,20 +46,20 @@ bot.on("message", msg => {
       "\n 101. !gif \t\t\t - Try me :)" +
       "\n 102. !avatar \t\t - Show user's profile picture (avatar)"
     );
-  
+
   if (msg.content.startsWith(prefix + "avatar"))
     msg.reply(msg.author.avatarURL);
-  
+
   if (msg.content.startsWith(prefix + "mitigator"))
     msg.reply("\n Type one of this :" +
       " \n !search `element` `rarity` reduces damage" +
       " \n !search `element` `rarity` damage reduction" );
-  
+
   if (msg.content.startsWith(prefix + "sparker")) {
-    var sparker_string = "\n Type one of this : \n !search `element` `rarity` boosts spark damage \n !search `element` `rarity` spark critical "
+    var sparker_string = "\n Type one of this : \n !search `element` `rarity` boosts spark damage \n !search `element` `rarity` spark critical ";
     msg.reply(sparker_string);
   }
-  
+
   if (msg.content.startsWith(prefix + "healer"))
     msg.reply("\n Type one of this :" +
     "\n !search `element` `rarity` restores hp " +
@@ -69,7 +69,7 @@ bot.on("message", msg => {
     "\n !search `element` `rarity` spark damage restores hp" +
     "\n !search `element` `rarity` absorbs hp" +
     "\n !search `element` `rarity` may restore HP" );
-  
+
   if (msg.content.startsWith(prefix + "search")) {
     var count_search = 0;
     let [element, rarity, text1, text2, text3, text4, text5, text6, text7, text8, text9, text10] = msg.content.split(" ").slice(1);
@@ -85,7 +85,7 @@ bot.on("message", msg => {
         for (var key_search in json_bf) {
           if( json_bf[key_search]["element"] == `${element}` && json_bf[key_search]["rarity"] == `${rarity}` && json_bf[key_search]["kind"] == "normal") {
             var str_search_ls, str_search_bb, str_search_sbb, str_search_ubb, str_search_es;
-  
+
             if(`${rarity}` < 6 ) {
               str_search_ls = JSON.stringify(json_bf[key_search]["leader skill"]["desc"]);
               str_search_bb = JSON.stringify(json_bf[key_search]["bb"]["desc"]);
@@ -164,7 +164,7 @@ bot.on("message", msg => {
       msg.reply("Unit not found, try different name or rarity");
     }
   }
-  
+
   if (msg.content.startsWith(prefix + "list")) {
     var count_list = 0;
     let [unit, rarity] = msg.content.split(" ").slice(1);
@@ -174,14 +174,14 @@ bot.on("message", msg => {
         var str_list = JSON.stringify(json_bf[key_list]["name"]);
         if(`${rarity}` == "all") {
           if ( str_list.toLowerCase().includes(`${unit}`.toLowerCase())) {
-            bf_list_full_string = bf_list_full_string + 
-              "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost"
+            bf_list_full_string = bf_list_full_string +
+              "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost";
             count_list++;
           }
         } else {
           if ( str_list.toLowerCase().includes(`${unit}`.toLowerCase()) && json_bf[key_list]["rarity"] == `${rarity}`) {
-            bf_list_full_string = bf_list_full_string + 
-              "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost"
+            bf_list_full_string = bf_list_full_string +
+              "\n :id: " + json_bf[key_list]["guide_id"] + " | " + json_bf[key_list]["name"] + " (" + json_bf[key_list]["rarity"] + ":star:) " + json_bf[key_list]["cost"] + " Cost";
             count_list++;
           }
         }
@@ -202,24 +202,22 @@ bot.on("message", msg => {
   }
 
   if (msg.content.startsWith(prefix + "op_list")) {
-    var op_list_full_string = "";
+    var op_list_full_string = "", unit_id = 1, str_families;
     let [unit, rarity] = msg.content.split(" ").slice(1);
-    var unit_id = 1;
     if( `${unit}`.length > 2) {
       for(i = 0; i < units.length; i++) {
         var id = i + 1;
-        var str_list = units[i][0];
-        if(families[i] != null) var str_families = families[i];
-        else var str_families = "";
+        if(families[i] != null) str_families = families[i];
+        else str_families = "";
         if(`${rarity}` == "all") {
-          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && details[unit_id]['captain'] !== undefined) {
-            op_list_full_string = op_list_full_string + 
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && details[unit_id]["captain"] !== undefined) {
+            op_list_full_string = op_list_full_string +
               "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
           }
         } else {
-          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}` && details[unit_id]['captain'] !== undefined) {
-            op_list_full_string = op_list_full_string + 
-              "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost"
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}` && details[unit_id]["captain"] !== undefined) {
+            op_list_full_string = op_list_full_string +
+              "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
           }
         }
         unit_id++;
@@ -228,11 +226,9 @@ bot.on("message", msg => {
         msg.reply("Unit not found, try different name or rarity");
       else
         msg.reply(op_list_full_string);
-    } else {
-      msg.reply("Please insert at least 3 characters");
-    }
+    } else msg.reply("Please insert at least 3 characters");
   }
-  
+
   if (msg.content.startsWith(prefix + "unit")) {
     var count_unit = 0;
     let [id] = msg.content.split(" ").slice(1);
@@ -285,59 +281,57 @@ bot.on("message", msg => {
   }
 
   if (msg.content.startsWith(prefix + "op_unit")) {
-    var count_unit = 0;
-    var ability = "";
-    var op_unit_full_string = "";
+    var ability, op_unit_full_string, max_cd, min_cd, four_id, unit_class;
     let [unit_id] = msg.content.split(" ").slice(1);
 
     if(cooldowns[`${unit_id}`-1] !== null) {
-    	var max_cd = cooldowns[`${unit_id}`-1][0]
-        if(cooldowns[`${unit_id}`-1][1] === undefined)
-        	var min_cd = max_cd
-        else
-        	var min_cd = cooldowns[`${unit_id}`-1][1]
-    } else {
-    	var max_cd = "none", min_cd="none";
-    }
+      max_cd = cooldowns[`${unit_id}`-1][0];
+      if(cooldowns[`${unit_id}`-1][1] === undefined) min_cd = max_cd;
+      else min_cd = cooldowns[`${unit_id}`-1][1];
+    } else max_cd = "none", min_cd="none";
 
     if(`${unit_id}`.match(/^[0-9]+$/) != null) {
-      if(details[`${unit_id}`] === undefined) {
-        msg.reply("Unit does/has not exist");
-      } else {
+      if(details[`${unit_id}`] === undefined) msg.reply("Unit does/has not exist");
+      else {
         for(i = 0; i < units.length; i++) {
           // set unit id
           id = i + 1;
 
           // set unit's abilities
           if(`${unit_id}` == id){
-            if(details[`${unit_id}`]['captain'] !== undefined)
-              ability = ability + "\n Captain Ability : " + "\n\t" + details[`${unit_id}`]['captain'];
-            if(details[`${unit_id}`]['sailor'] !== undefined)
-              ability = ability + "\n Sailor Ability : " + "\n\t" + details[`${unit_id}`]['sailor'];
-          	if(details[`${unit_id}`]['special'] !== undefined){
-            	if(details[`${unit_id}`]['special'][0]['description'] === undefined)
-                	ability = ability + "\n Special Ability (CD : " + max_cd + " -> " + min_cd + ")" + " :\n\t" + details[`${unit_id}`]['special'];
-                else {
-					ability = ability + "\n Special Ability : ";
-					temp = 1;
-					for(var key_special in details[`${unit_id}`]['special']){
-						ability = ability + "\n\tStage " + temp + " (CD : " + details[`${unit_id}`]['special'][key_special]['cooldown'][0] + " -> " + 
-						details[`${unit_id}`]['special'][key_special]['cooldown'][1] + ") : \n\t\t" + details[`${unit_id}`]['special'][key_special]['description'];
-						temp++;
-					}
-				}
-			}
+            if(details[`${unit_id}`]["captain"] !== undefined)
+              ability = ability + "\n Captain Ability : " + "\n\t" + details[`${unit_id}`]["captain"];
+            if(details[`${unit_id}`]["sailor"] !== undefined)
+              ability = ability + "\n Sailor Ability : " + "\n\t" + details[`${unit_id}`]["sailor"];
+            if(details[`${unit_id}`]["special"] !== undefined){
+              if(details[`${unit_id}`]["special"][0]["description"] === undefined)
+                ability = ability + "\n Special Ability (CD : " + max_cd + " -> " + min_cd + ")" +
+                          " :\n\t" + details[`${unit_id}`]["special"];
+              else {
+                ability = ability + "\n Special Ability : ";
+                var temp = 1;
+                for(var key_special in details[`${unit_id}`]["special"]){
+                  ability = ability + "\n\tStage " + temp + " (CD : " +
+                            details[`${unit_id}`]["special"][key_special]["cooldown"][0] + " -> " +
+                            details[`${unit_id}`]["special"][key_special]["cooldown"][1] + ") : \n\t\t" +
+                            details[`${unit_id}`]["special"][key_special]["description"];
+                  temp++;
+                }
+              }
+            }
           }
 
           // set id into 4 digit string
-          if(id < 10) ids = "000"+id;
-          else if(id >9 && id < 100) ids = "00"+id;
-          else if(id > 99 && id < 1000) ids = "0"+id;
-          else ids = id;
+          if(id < 10) four_id = "000"+id;
+          else if(id >9 && id < 100) four_id = "00"+id;
+          else if(id > 99 && id < 1000) four_id = "0"+id;
+          else four_id = id;
 
           // set unit's class
-          if(units[i][2][1] != null && units[i][2][0].length != 1 && units[i][2][1].length != 1) unit_class = units[i][2][0] + units[i][2][1];
-          else unit_class = units[i][2];
+          if(units[i][2][1] != null && units[i][2][0].length != 1 && units[i][2][1].length != 1)
+            unit_class = units[i][2][0] + units[i][2][1];
+          else
+            unit_class = units[i][2];
           unit_class = unit_class.toString().replace("Slasher", "<:slasher:264570214736330764>");
           unit_class = unit_class.toString().replace("Striker", "<:striker:264570214258049036>");
           unit_class = unit_class.toString().replace("Shooter", "<:shooter:264570214287540224>");
@@ -349,19 +343,15 @@ bot.on("message", msg => {
           unit_class = unit_class.toString().replace("Cerebral", "<:cerebral:264570214434209792>");
           unit_class = unit_class.toString().replace("Booster", "<:booster:264570214719553536>");
 
-          if(i+1 == `${unit_id}`){
-            op_unit_full_string = 
+          if(i+1 == `${unit_id}`)
+            op_unit_full_string =
               "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " +
-              "\n\t\t " + units[i][1] + " | " + units[i][4] + " Cost" + " | " + unit_class +
-              ability +
-              "\n http://onepiece-treasurecruise.com/wp-content/uploads/c" + ids + ".png";
-          }
+              "\n\t\t " + units[i][1] + " | " + units[i][4] + " Cost" + " | " + unit_class + ability +
+              "\n http://onepiece-treasurecruise.com/wp-content/uploads/c" + four_id + ".png";
         }
       }
       msg.reply(op_unit_full_string);
-    } else {
-      msg.reply("Please insert numeric unit ID");
-    }
+    } else msg.reply("Please insert numeric unit ID");
   }
 });
 
