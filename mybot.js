@@ -1,12 +1,12 @@
 var Discord = require("discord.js");
 var bot = new Discord.Client();
 var fs = require("fs");
-var data_bf = fs.readFileSync("/info.json");
+var data_bf = fs.readFileSync("bravefrontier_data/info.json");
 var json_bf = JSON.parse(data_bf);
-var data_op = require("/units.js");
-var special_op = require("/details.js");
-var families_op = require("/families.js");
-var cooldowns_op = require("/cooldowns.js");
+var data_op = require("./units.js");
+var special_op = require("./details.js");
+var families_op = require("./families.js");
+var cooldowns_op = require("./cooldowns.js");
 var units = data_op.units;
 var details = special_op.details;
 var families = families_op.families;
