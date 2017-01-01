@@ -56,7 +56,9 @@ bot.on("message", msg => {
       " \n !search `element` `rarity` damage reduction" );
 
   if (msg.content.startsWith(prefix + "sparker")) {
-    var sparker_string = "\n Type one of this : \n !search `element` `rarity` boosts spark damage \n !search `element` `rarity` spark critical ";
+    var sparker_string = "\n Type one of this :" +
+    "\n !search `element` `rarity` boosts spark damage" +
+    "\n !search `element` `rarity` spark critical ";
     msg.reply(sparker_string);
   }
 
@@ -202,30 +204,22 @@ bot.on("message", msg => {
   }
 
   if (msg.content.startsWith(prefix + "op_list")) {
-    var op_list_full_string = "", unit_id = 1, str_families;
+    var op_list_full_string = "", str_families;
     let [unit, rarity] = msg.content.split(" ").slice(1);
     if( `${unit}`.length > 2) {
       for(i = 0; i < units.length; i++) {
         var id = i + 1;
         if(families[i] != null) str_families = families[i];
         else str_families = "";
-        if(`${rarity}` == "all") {
-          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && details[unit_id]["captain"] !== undefined) {
-            op_list_full_string = op_list_full_string +
-              "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
-          }
-        } else {
-          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}` && details[unit_id]["captain"] !== undefined) {
-            op_list_full_string = op_list_full_string +
-              "\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
-          }
-        }
-        unit_id++;
+        if(`${rarity}` == "all")
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && details[id]["captain"] !== undefined)
+            op_list_full_string = op_list_full_string +"\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
+        else
+          if ( str_families.toLowerCase().includes(`${unit}`.toLowerCase()) && units[i][3] == `${rarity}` && details[id]["captain"] !== undefined)
+            op_list_full_string = op_list_full_string +"\n :id: " + id + " | " + units[i][0] + " (" + units[i][3] + ":star:) " + units[i][4] + " Cost";
       }
-      if(op_list_full_string == "")
-        msg.reply("Unit not found, try different name or rarity");
-      else
-        msg.reply(op_list_full_string);
+      if(op_list_full_string == "") msg.reply("No unit found, try different name or rarity");
+      else msg.reply(op_list_full_string);
     } else msg.reply("Please insert at least 3 characters");
   }
 
