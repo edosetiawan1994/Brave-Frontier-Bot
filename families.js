@@ -1414,4 +1414,3 @@ var families = [
     "Whitebeard",
     "Sanji",
 ];
-exports.families = families;

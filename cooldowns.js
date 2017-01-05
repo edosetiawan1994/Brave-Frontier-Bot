@@ -1415,4 +1415,3 @@ var cooldowns = [
     [ 6, 6 ],
 
 ];
-exports.cooldowns = cooldowns;

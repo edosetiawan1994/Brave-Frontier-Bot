@@ -23,6 +23,9 @@ bot.on("message", msg => {
   if (msg.content.startsWith(prefix + "gif"))
     msg.channel.sendMessage(("http://i.imgur.com/c5yeWVx.gif"));
 
+    if (msg.content.startsWith(prefix + "test"))
+      msg.channel.sendMessage(data_op.tests);
+
   if (msg.content.startsWith(prefix + "help"))
     msg.channel.sendMessage(
       "\n Command List : " +
